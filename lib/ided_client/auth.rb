@@ -15,6 +15,10 @@ module IdedClient
       Credential.new(access_token: token.token, credential_key: credential_key)
     end
 
+    def authorize_url
+      oauth_client.auth_code.authorize_url(redirect_uri: redirect_uri)
+    end
+
     private
 
     attr_reader :ided_host, :client_id, :client_secret, :redirect_uri, :credential_key
