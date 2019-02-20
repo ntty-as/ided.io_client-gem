@@ -9,6 +9,13 @@ module IdedClient
       token_payload.fetch("sub")
     end
 
+    def expired?
+      jwt_token
+      false
+    rescue JWT::ExpiredSignature => e
+      true
+    end
+
     private
 
     attr_reader :access_token, :credential_key

@@ -6,12 +6,27 @@ RSpec.describe IdedClient::Credential do
   let(:rsa_public) { rsa_private.public_key }
 
   # This payload should be the same as what ided.io returns in the JWT.
-  let(:payload) { {sub: "bob-mc-tester", exp: Time.now.to_i + 1000} }
+  let(:payload) { { sub: "bob-mc-tester", exp: exp } }
+  let(:exp) { Time.now.to_i + 1000 }
   let(:access_token) { JWT.encode payload, rsa_private, "RS512" }
 
   describe "#user_id" do
     it "exposes the user_id from the token" do
       expect(subject.user_id).to eql("bob-mc-tester")
+    end
+  end
+
+  describe "#expired?" do
+    it "is not expired when the expiry is in the future" do
+      expect(subject.expired?).to be(false)
+    end
+
+    context "expiry is in the past" do
+      let(:exp) { Time.parse("2018-01-01T12:00") }
+
+      it "has expired" do
+        expect(subject.expired?).to be(true)
+      end
     end
   end
 end
