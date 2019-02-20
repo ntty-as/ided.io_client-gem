@@ -9,6 +9,7 @@ RSpec.describe IdedClient::Auth do
       redirect_uri: redirect_uri,
       client_id: client_id,
       client_secret: client_secret,
+      credential_key: "fake key",
     }
   }
   let(:ided_host) { "https://ided.localhost" }
@@ -48,7 +49,7 @@ RSpec.describe IdedClient::Auth do
   end
 
   it "allows for the auth code to be exchanged for a token" do
-    credentials = subject.exchange_code_for_credentials(code)
-    expect(credentials).to include(access_token: "dummy-token")
+    credential = subject.exchange_code_for_credential(code)
+    expect(credential.access_token).to eql("dummy-token")
   end
 end

@@ -1,5 +1,7 @@
 module IdedClient
   class Credential
+    attr_reader :access_token
+
     def initialize(access_token:, credential_key:)
       @access_token = access_token
       @credential_key = credential_key
@@ -12,13 +14,13 @@ module IdedClient
     def expired?
       jwt_token
       false
-    rescue JWT::ExpiredSignature => e
+    rescue JWT::ExpiredSignature
       true
     end
 
     private
 
-    attr_reader :access_token, :credential_key
+    attr_reader :credential_key
 
     def token_payload
       jwt_token.first
