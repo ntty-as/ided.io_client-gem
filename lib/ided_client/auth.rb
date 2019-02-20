@@ -12,11 +12,15 @@ module IdedClient
 
     def exchange_code_for_credential(code)
       token = exchange_code(code)
-      Credential.new(access_token: token.token, credential_key: credential_key)
+      build_credential(access_token: token.token)
     end
 
     def authorize_url
       oauth_client.auth_code.authorize_url(redirect_uri: redirect_uri)
+    end
+
+    def build_credential(access_token:)
+      Credential.new(access_token: access_token, credential_key: credential_key)
     end
 
     private
