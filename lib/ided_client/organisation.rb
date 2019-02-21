@@ -1,4 +1,4 @@
 module IdedClient
-  class Team < BaseResource
+  class Organisation < BaseResource
   end
 end
