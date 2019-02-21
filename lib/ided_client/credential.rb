@@ -11,6 +11,14 @@ module IdedClient
       token_payload.fetch("sub")
     end
 
+    def user_name
+      token_payload.fetch("user_name")
+    end
+
+    def user_email
+      token_payload.fetch("user_email")
+    end
+
     def expired?
       jwt_token
       false
