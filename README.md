@@ -9,7 +9,7 @@ This gem is a wrapper around ided.io that makes it easier to interact with. It a
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'ided_client', github: 'elmatica/ided_client-gem'
+gem 'ided_client', github: 'ntty-as/ided.io_client-gem'
 ```
 
 And then execute:
