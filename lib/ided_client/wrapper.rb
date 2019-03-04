@@ -18,7 +18,7 @@ module IdedClient
     end
 
     def ided_host
-      @ided_host ||= ENV.fetch("IDED_HOST")
+      @ided_host ||= ENV.fetch("IDED_HOST", "https://auth.ided.io")
     end
 
     private
