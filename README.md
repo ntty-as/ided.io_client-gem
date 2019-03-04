@@ -9,7 +9,7 @@ This gem is a wrapper around ided.io that makes it easier to interact with. It a
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'ided_client', github: 'elmatica/ided_client-gem'
+gem 'ided_client', github: 'ntty-as/ided.io_client-gem'
 ```
 
 And then execute:
@@ -28,7 +28,6 @@ IDED_CLIENT.setup unless Rails.env.test?
 
 Calling the `setup` method assumes that you have the following environment variables available (some example values shown):
 ```
-IDED_HOST=https://auth.ided.io
 IDED_REDIRECT_URI=https://myapp.localhost/oauth-redirect
 IDED_CLIENT_ID=something-from-ided
 IDED_CLIENT_SECRET=secret-from-ided
@@ -171,7 +170,7 @@ module UserHelpers
 
   def stub_api(token, team_id)
     # If you are using Webmock to stub external services:
-    stub_request(:get, "http://test-ided.localhost/api/v1/teams?fields%5Bteams%5D=id")
+    stub_request(:get, "https://auth.ided.io/api/v1/teams?fields%5Bteams%5D=id")
       .with(headers: { "Authorization" => "Bearer #{token}" })
       .to_return(
         status: 200,
@@ -186,7 +185,6 @@ RSpec.configure do |config|
 
   def setup_ided_client
     allow(ENV).to receive(:fetch).and_call_original
-    allow(ENV).to receive(:fetch).with("IDED_HOST").and_return("http://test-ided.localhost")
     allow(ENV).to receive(:fetch).with("IDED_REDIRECT_URI").and_return("http://test-ided.localhost/redirect")
     allow(ENV).to receive(:fetch).with("IDED_CLIENT_ID").and_return("pizza-client-yo")
     allow(ENV).to receive(:fetch).with("IDED_CLIENT_SECRET").and_return("super-secret-calzone")
