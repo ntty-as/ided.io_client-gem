@@ -10,6 +10,13 @@ module IdedClient
       )
     end
 
+    def credential_from_request(request)
+      Credential.new(
+        access_token: request.authorization.sub(/^Bearer /, ""),
+        credential_key: credential_key,
+      )
+    end
+
     def setup
       # Ensure that auth env variables are present.
       auth
