@@ -18,31 +18,42 @@ And then execute:
 
 ## Usage
 
+The following instructions apply to both applications that integrate with ided.io as a registered application and those that are API only. API only applications typically accept a token but do not request tokens.
+
+Some sections can be skipped for API only apps and these are marked appropriately.
+
 Add an initializer:
 
 ```ruby
 IDED_CLIENT = IdedClient.build
 
+# Skip for API only apps.
 IDED_CLIENT.setup unless Rails.env.test?
 ```
 
 Calling the `setup` method assumes that you have the following environment variables available (some example values shown):
 ```
+IDED_CREDENTIAL_KEY=something-else-from-ided
+
+# Skip for API only apps.
 IDED_REDIRECT_URI=https://myapp.localhost/oauth-redirect
 IDED_CLIENT_ID=something-from-ided
 IDED_CLIENT_SECRET=secret-from-ided
-IDED_CREDENTIAL_KEY=something-else-from-ided
 ```
 
 You can add these to the file `.env.development` and use [dotenv-rails](https://github.com/bkeepers/dotenv) to load it if you are using rails.
 
 ### Generating a login link
+_Skip for API only apps._
+
 To generate a link for logging in use:
 ```ruby
 IDED_CLIENT.auth.authorize_url
 ```
 
 ### Getting a token
+_Skip for API only apps._
+
 The final step of authenticating a user is when they comeback to your application with a `code`. This needs to be exchanged for a token before you can access the API and determine who they are.
 
 Setup a handler for the route `https://myapp.localhost/oauth-redirect` in your application. In rails this looks something like:
@@ -56,6 +67,17 @@ class OauthRedirectController < ApplicationController
   end
 end
 ```
+
+### Extracting a token from a request
+
+_Skip for normal, non API only apps._
+
+To extract a token from a request you can use:
+```ruby
+IDED_CLIENT.credential_from_request(request)
+```
+
+For this to work it is assumed that the request object responds to the `authorization` method.
 
 ### Using the token
 
@@ -131,7 +153,6 @@ end
 
 If you want to have a link to ided.io then you can use `IDED_CLIENT.ided_host` to generate the base of the link.
 
-
 ### Testing
 
 To help testing your system without testing the behaviour of ided.io you can mock ided.io with some test helpers.
@@ -144,6 +165,7 @@ require "ided_client/test_helpers"
 module UserHelpers
   def login(user: test_user, team_id: default_team_id, exp: 7200)
     token = IdedClient::TestHelpers.user_test_token(test_user.id, exp)
+    # Skip for API only apps.
     setup_session(token)
 
     stub_api(token, team_id)
@@ -157,6 +179,7 @@ module UserHelpers
     "14aa11ba-6e15-4360-8bfc-d50c1265c5e3"
   end
 
+  # Skip for API only apps.
   def setup_session(token)
     is_set = false
     allow_any_instance_of(ApplicationController).to receive(:access_token) do |cntrl|
@@ -185,10 +208,12 @@ RSpec.configure do |config|
 
   def setup_ided_client
     allow(ENV).to receive(:fetch).and_call_original
+    allow(ENV).to receive(:fetch).with("IDED_CREDENTIAL_KEY").and_return(IdedClient::TestHelpers.public_key.to_s)
+
+    # Skip remainder for API only apps.
     allow(ENV).to receive(:fetch).with("IDED_REDIRECT_URI").and_return("http://test-ided.localhost/redirect")
     allow(ENV).to receive(:fetch).with("IDED_CLIENT_ID").and_return("pizza-client-yo")
     allow(ENV).to receive(:fetch).with("IDED_CLIENT_SECRET").and_return("super-secret-calzone")
-    allow(ENV).to receive(:fetch).with("IDED_CREDENTIAL_KEY").and_return(IdedClient::TestHelpers.public_key.to_s)
     CdpIded.setup_resources
   end
 
