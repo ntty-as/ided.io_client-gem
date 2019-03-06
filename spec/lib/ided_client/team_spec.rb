@@ -7,8 +7,7 @@ RSpec.describe IdedClient::Team do
     let(:credential) { IdedClient::Credential.new(access_token: "pizza", credential_key: "fake") }
 
     before do
-      IdedClient::BaseResource.site = "http://ided.localhost"
-      stub_request(:get, "http://ided.localhost/teams")
+      stub_request(:get, "https://auth.ided.io/api/v1/teams")
         .with(
           headers: {
             "Accept" => "application/vnd.api+json",
