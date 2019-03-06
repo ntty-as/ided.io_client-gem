@@ -9,5 +9,8 @@ module IdedClient
     def self.host=(host)
       self.site = "#{host}/api/v1"
     end
+
+    # Set the default host for resources.
+    self.host = "https://auth.ided.io"
   end
 end
