@@ -77,21 +77,30 @@ To extract a token from a request you can use:
 IDED_CLIENT.credential_from_request(request)
 ```
 
-For this to work it is assumed that the request object responds to the `authorization` method.
+This will pull the token out of the `Authorization` header if present.
 
 ### Using the token
 
 To make use of the token in your session you can utilize the following helpers for your controller:
 ```ruby
+# Not needed for API only apps.
 def access_token
   session[:access_token]
 end
 
+def credential_present?
+  access_token.present?
+  # Or for API only apps:
+  credential.present?
+end
+
 def authenticated_as_user?
-  access_token.present? && user_id.present?
+  credential_present? && user_id.present?
 end
 
 def credential
+  @credential ||= IDED_CLIENT.auth.build_credential(access_token: access_token)
+  # Or for API only apps:
   @credential ||= IDED_CLIENT.auth.build_credential(access_token: access_token)
 end
 
@@ -100,7 +109,7 @@ def user_id
 end
 
 def current_user
-  @current_user ||= User.find_or_create_by!(id: id) do |user|
+  @current_user ||= User.find_or_create_by!(id: user_id) do |user|
     user.name = credential.user_name
 
     hash = Digest::MD5.hexdigest(credential.user_email)
@@ -114,6 +123,7 @@ Add a before filter to protect the routes you would like to:
 before_action :ensure_user_present
 
 def ensure_user_present
+  # Likely want to return a 401 if this is an API only app.
   unless current_user.present?
     redirect_to '/login'
   end
