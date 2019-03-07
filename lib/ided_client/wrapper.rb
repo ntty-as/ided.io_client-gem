@@ -11,8 +11,11 @@ module IdedClient
     end
 
     def credential_from_request(request)
+      auth_header = request.headers["Authorization"]
+      return if auth_header.nil?
+
       Credential.new(
-        access_token: request.authorization.sub(/^Bearer /, ""),
+        access_token: auth_header.sub(/^Bearer /, ""),
         credential_key: credential_key,
       )
     end
