@@ -22,7 +22,7 @@ module IdedClient
     end
 
     def user_gravatar
-      hash = Digest::MD5.hexdigest(token_payload.fetch("user_email").downcase)
+      hash = Digest::MD5.hexdigest(user_email.downcase)
       "https://www.gravatar.com/avatar/#{hash}"
     end
 
