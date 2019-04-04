@@ -1,3 +1,5 @@
+require 'digest/md5'
+
 module IdedClient
   class Credential
     attr_reader :access_token
@@ -17,6 +19,11 @@ module IdedClient
 
     def user_email
       token_payload.fetch("user_email")
+    end
+
+    def user_gravatar
+      hash = Digest::MD5.hexdigest(user_email.downcase)
+      "https://www.gravatar.com/avatar/#{hash}"
     end
 
     def expired?

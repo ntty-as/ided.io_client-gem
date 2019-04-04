@@ -6,13 +6,19 @@ RSpec.describe IdedClient::Credential do
   let(:rsa_public) { rsa_private.public_key }
 
   # This payload should be the same as what ided.io returns in the JWT.
-  let(:payload) { { sub: "bob-mc-tester", exp: exp } }
+  let(:payload) { { user_email: "test@example.com", sub: "bob-mc-tester", exp: exp } }
   let(:exp) { Time.now.to_i + 1000 }
   let(:access_token) { JWT.encode payload, rsa_private, "RS512" }
 
   describe "#user_id" do
     it "exposes the user_id from the token" do
       expect(subject.user_id).to eql("bob-mc-tester")
+    end
+  end
+
+  describe "#user_gravatar" do
+    it "exposes the user_gravatar from the token" do
+      expect(subject.user_gravatar).to eql("https://www.gravatar.com/avatar/55502f40dc8b7c769880b10874abc9d0")
     end
   end
 
