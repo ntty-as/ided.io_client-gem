@@ -16,6 +16,12 @@ RSpec.describe IdedClient::Credential do
     end
   end
 
+  describe "#user_gravatar" do
+    it "exposes the user_gravatar from the token" do
+      expect(subject.user_gravatar).to eql("https://www.gravatar.com/avatar/55502f40dc8b7c769880b10874abc9d0")
+    end
+  end
+
   describe "#expired?" do
     it "is not expired when the expiry is in the future" do
       expect(subject.expired?).to be(false)
