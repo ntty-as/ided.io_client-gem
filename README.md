@@ -224,7 +224,7 @@ RSpec.configure do |config|
     allow(ENV).to receive(:fetch).with("IDED_REDIRECT_URI").and_return("http://test-ided.localhost/redirect")
     allow(ENV).to receive(:fetch).with("IDED_CLIENT_ID").and_return("pizza-client-yo")
     allow(ENV).to receive(:fetch).with("IDED_CLIENT_SECRET").and_return("super-secret-calzone")
-    CdpIded.setup_resources
+    IDED_CLIENT.setup_resources
   end
 
   config.before(:each, type: :request) { setup_ided_client }
