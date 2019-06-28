@@ -28,7 +28,7 @@ RSpec.describe IdedClient::Credential do
     end
 
     context "expiry is in the past" do
-      let(:exp) { Time.parse("2018-01-01T12:00") }
+      let(:exp) { Time.now.to_i - 1000 }
 
       it "has expired" do
         expect(subject.expired?).to be(true)
