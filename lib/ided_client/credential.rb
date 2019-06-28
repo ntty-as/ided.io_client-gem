@@ -2,10 +2,11 @@ require 'digest/md5'
 
 module IdedClient
   class Credential
-    attr_reader :access_token
+    attr_reader :access_token, :refresh_token
 
-    def initialize(access_token:, credential_key:)
+    def initialize(access_token:, refresh_token: nil, credential_key:)
       @access_token = access_token
+      @refresh_token = refresh_token
       @credential_key = credential_key
     end
 

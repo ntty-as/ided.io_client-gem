@@ -1,7 +1,7 @@
 require "spec_helper"
 
 RSpec.describe IdedClient::Credential do
-  subject { described_class.new(access_token: access_token, credential_key: rsa_public) }
+  subject { described_class.new(access_token: access_token, refresh_token: nil, credential_key: rsa_public) }
   let(:rsa_private) { OpenSSL::PKey::RSA.generate 2048 }
   let(:rsa_public) { rsa_private.public_key }
 
