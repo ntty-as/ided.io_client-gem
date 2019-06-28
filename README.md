@@ -62,6 +62,7 @@ class OauthRedirectController < ApplicationController
   def index
     cred = IDED_CLIENT.client.exchange_code_for_credential(params[:code])
     session[:access_token] = cred.access_token
+    session[:refresh_token] = cred.refresh_token
 
     redirect_to("/your-home-page-goes-here")
   end
@@ -88,6 +89,10 @@ def access_token
   session[:access_token]
 end
 
+def refresh_token
+  session[:refresh_token]
+end
+
 def credential_present?
   access_token.present?
   # Or for API only apps:
@@ -106,12 +111,15 @@ end
 
 def user_id
   credential.user_id
+# To refresh an expiring token
+rescue JWT::ExpiredSignature
+  IDED_CLIENT.auth.exchange_refresh_token(refresh_token)
+  retry
 end
 
 def current_user
   @current_user ||= User.find_or_create_by!(id: user_id) do |user|
     user.name = credential.user_name
-
     hash = Digest::MD5.hexdigest(credential.user_email)
     user.photo_url = "https://www.gravatar.com/avatar/#{hash}"
   end
@@ -131,9 +139,9 @@ end
 ```
 
 ### Handling tokens expiring
-A token is valid for a defined period (approx 2 hours currently). After this the token is no longer valid.
+A token is valid for a defined period (approx 2 hours currently). After this the token is no longer valid. You can use the supplied refresh token to issue a new valid token.
 
-To handle this case you can add something like the following to your controller:
+To handle expired tokens without refreshing, you can add something like the following to your controller:
 ```ruby
 rescue_from JWT::ExpiredSignature do
   reset_session
